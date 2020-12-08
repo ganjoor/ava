@@ -1,3 +1,5 @@
+import 'package:ava/models/recitation/recitation-verse-sync.dart';
+
 class PublicRecitationViewModel {
   final int id;
   final int poemId;
@@ -17,6 +19,7 @@ class PublicRecitationViewModel {
   final String xmlText;
   final String plainText;
   final String htmlText;
+  List<RecitationVerseSync> verses;
 
   PublicRecitationViewModel(
       {this.id,

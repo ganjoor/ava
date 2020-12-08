@@ -2,6 +2,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:ava/models/common/paginated-items-response-model.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/services/published-recitations-service.dart';
+import 'package:ava/view-recitation.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
@@ -55,8 +56,65 @@ class _MyHomePageState extends State<MyHomePage>
   final GlobalKey<ScaffoldMessengerState> _key =
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
+  int _pageNumber = 1;
+  int _pageSize = 20;
+  String _searchTerm = '';
+
   PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
+
+  Future _loadRecitations() async {
+    setState(() {
+      _isLoading = true;
+    });
+    var res = await PublishedRecitationsService()
+        .getRecitations(_pageNumber, _pageSize, _searchTerm);
+    if (res.error.isNotEmpty) {
+      _key.currentState.showSnackBar(SnackBar(
+        content: Text("خطا در دریافت خوانش‌ها: " + res.error),
+        backgroundColor: Colors.red,
+      ));
+    }
+    setState(() {
+      _isLoading = false;
+      if (res.error.isEmpty) {
+        _recitations = res;
+      }
+    });
+  }
+
+  void _loadingStateChanged(bool isLoading) {
+    setState(() {
+      this._isLoading = isLoading;
+    });
+  }
+
+  void _snackbarNeeded(String msg) {
+    _key.currentState.showSnackBar(SnackBar(
+      content: Text(msg),
+      backgroundColor: Colors.red,
+    ));
+  }
+
+  Future _view(PublicRecitationViewModel narration) async {
+    return showDialog<PublicRecitationViewModel>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        ViewRecitation _narrationEdit = ViewRecitation(
+          narration: narration,
+          loadingStateChanged: this._loadingStateChanged,
+          snackbarNeeded: this._snackbarNeeded,
+        );
+        return AlertDialog(
+          title: Text('مشاهدهٔ خوانش'),
+          content: SingleChildScrollView(
+            child: _narrationEdit,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +135,14 @@ class _MyHomePageState extends State<MyHomePage>
                       // Here we take the value from the MyHomePage object that was created by
                       // the App.build method, and use it to set our appbar title.
                       title: Text(widget.title),
+                      actions: [
+                        IconButton(
+                            icon: Icon(Icons.refresh),
+                            tooltip: 'تازه‌سازی',
+                            onPressed: () async {
+                              await _loadRecitations();
+                            }),
+                      ],
                     ),
                     body: Builder(
                         builder: (context) => Center(
@@ -86,7 +152,10 @@ class _MyHomePageState extends State<MyHomePage>
                                   return ListTile(
                                     leading: IconButton(
                                         icon: Icon(Icons.play_arrow),
-                                        onPressed: null),
+                                        onPressed: () async {
+                                          await _view(
+                                              _recitations.items[index]);
+                                        }),
                                     title: Text(
                                         _recitations.items[index].audioTitle),
                                     subtitle: Column(children: [
@@ -101,21 +170,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-    var res = await PublishedRecitationsService().getRecitations(1, 10, '');
-    if (res.error.isNotEmpty) {
-      _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: " + res.error),
-        backgroundColor: Colors.red,
-      ));
-    }
-    setState(() {
-      _isLoading = false;
-      if (res.error.isEmpty) {
-        _recitations = res;
-      }
-    });
+    await _loadRecitations();
   }
 }

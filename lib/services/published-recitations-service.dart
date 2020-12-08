@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:ava/models/common/paginated-items-response-model.dart';
 import 'package:ava/models/common/pagination-metadata.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
+import 'package:ava/models/recitation/recitation-verse-sync.dart';
 import 'package:ava/services/gservice-address.dart';
 import 'package:http/http.dart' as http;
+import 'package:tuple/tuple.dart';
 
 class PublishedRecitationsService {
   Future<PaginatedItemsResponseModel<PublicRecitationViewModel>> getRecitations(
@@ -38,6 +40,35 @@ class PublishedRecitationsService {
     } catch (e) {
       return PaginatedItemsResponseModel<PublicRecitationViewModel>(
           error: 'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
+              e.toString());
+    }
+  }
+
+  Future<Tuple2<List<RecitationVerseSync>, String>> getVerses(int id) async {
+    try {
+      var apiRoot = GServiceAddress.Url;
+      http.Response response = await http.get('$apiRoot/api/audio/verses/$id',
+          headers: {'Content-Type': 'application/json; charset=UTF-8'});
+
+      List<RecitationVerseSync> ret = [];
+      if (response.statusCode == 200) {
+        List<dynamic> items = json.decode(response.body);
+        for (var item in items) {
+          ret.add(RecitationVerseSync.fromJson(item));
+        }
+        return Tuple2<List<RecitationVerseSync>, String>(ret, '');
+      } else {
+        return Tuple2<List<RecitationVerseSync>, String>(
+            null,
+            'کد برگشتی: ' +
+                response.statusCode.toString() +
+                ' ' +
+                response.body);
+      }
+    } catch (e) {
+      return Tuple2<List<RecitationVerseSync>, String>(
+          null,
+          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
               e.toString());
     }
   }
