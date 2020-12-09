@@ -7,29 +7,48 @@ import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(AvaApp());
 }
 
-class MyApp extends StatelessWidget {
+class AvaApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => AvaAppState();
+}
+
+class AvaAppState extends State<AvaApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'آوای گنجور',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'آوای گنجور'),
-    );
+        title: 'آوای گنجور',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(title: 'آوای گنجور'),
+        builder: (BuildContext context, Widget child) {
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Builder(
+              builder: (BuildContext context) {
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaleFactor: 1.0,
+                  ),
+                  child: child,
+                );
+              },
+            ),
+          );
+        });
   }
 }
 
@@ -124,48 +143,43 @@ class _MyHomePageState extends State<MyHomePage>
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child: ScaffoldMessenger(
-            key: _key,
-            child: LoadingOverlay(
-                isLoading: _isLoading,
-                child: Scaffold(
-                    appBar: AppBar(
-                      // Here we take the value from the MyHomePage object that was created by
-                      // the App.build method, and use it to set our appbar title.
-                      title: Text(widget.title),
-                      actions: [
-                        IconButton(
-                            icon: Icon(Icons.refresh),
-                            tooltip: 'تازه‌سازی',
-                            onPressed: () async {
-                              await _loadRecitations();
-                            }),
-                      ],
-                    ),
-                    body: Builder(
-                        builder: (context) => Center(
-                            child: ListView.builder(
-                                itemCount: _recitations.items.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                    leading: IconButton(
-                                        icon: Icon(Icons.play_arrow),
-                                        onPressed: () async {
-                                          await _view(
-                                              _recitations.items[index]);
-                                        }),
-                                    title: Text(
-                                        _recitations.items[index].audioTitle),
-                                    subtitle: Column(children: [
-                                      Text(_recitations
-                                          .items[index].poemFullTitle),
-                                      Text(_recitations
-                                          .items[index].audioArtist),
-                                    ]),
-                                  );
-                                })))))));
+    return ScaffoldMessenger(
+        key: _key,
+        child: LoadingOverlay(
+            isLoading: _isLoading,
+            child: Scaffold(
+                appBar: AppBar(
+                  // Here we take the value from the MyHomePage object that was created by
+                  // the App.build method, and use it to set our appbar title.
+                  title: Text(widget.title),
+                  actions: [
+                    IconButton(
+                        icon: Icon(Icons.refresh),
+                        tooltip: 'تازه‌سازی',
+                        onPressed: () async {
+                          await _loadRecitations();
+                        }),
+                  ],
+                ),
+                body: Builder(
+                    builder: (context) => Center(
+                        child: ListView.builder(
+                            itemCount: _recitations.items.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                leading: IconButton(
+                                    icon: Icon(Icons.play_arrow),
+                                    onPressed: () async {
+                                      await _view(_recitations.items[index]);
+                                    }),
+                                title:
+                                    Text(_recitations.items[index].audioTitle),
+                                subtitle: Column(children: [
+                                  Text(_recitations.items[index].poemFullTitle),
+                                  Text(_recitations.items[index].audioArtist),
+                                ]),
+                              );
+                            }))))));
   }
 
   @override
