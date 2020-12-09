@@ -115,20 +115,20 @@ class _MyHomePageState extends State<MyHomePage>
     ));
   }
 
-  Future _view(PublicRecitationViewModel narration) async {
+  Future _view(PublicRecitationViewModel recitation) async {
     return showDialog<PublicRecitationViewModel>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        ViewRecitation _narrationEdit = ViewRecitation(
-          narration: narration,
+        ViewRecitation _narrationView = ViewRecitation(
+          narration: recitation,
           loadingStateChanged: this._loadingStateChanged,
           snackbarNeeded: this._snackbarNeeded,
         );
         return AlertDialog(
-          title: Text('مشاهدهٔ خوانش'),
+          title: Text(recitation.audioTitle),
           content: SingleChildScrollView(
-            child: _narrationEdit,
+            child: _narrationView,
           ),
         );
       },

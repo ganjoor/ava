@@ -34,9 +34,6 @@ class _ViewRecitationState extends State<ViewRecitation>
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _artistNameController = TextEditingController();
-  TextEditingController _artistUrlController = TextEditingController();
-  TextEditingController _audioSrcController = TextEditingController();
-  TextEditingController _audioSrcUrlController = TextEditingController();
 
   @override
   void initState() {
@@ -52,9 +49,7 @@ class _ViewRecitationState extends State<ViewRecitation>
     _player.dispose();
     _titleController.dispose();
     _artistNameController.dispose();
-    _artistUrlController.dispose();
-    _audioSrcController.dispose();
-    _audioSrcUrlController.dispose();
+
     super.dispose();
   }
 
@@ -75,11 +70,9 @@ class _ViewRecitationState extends State<ViewRecitation>
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = narration.audioTitle;
+    _titleController.text = narration.poemFullTitle;
     _artistNameController.text = narration.audioArtist;
-    _artistUrlController.text = narration.audioArtistUrl;
-    _audioSrcController.text = narration.audioSrc;
-    _audioSrcUrlController.text = narration.audioSrcUrl;
+
     return FocusTraversalGroup(
         child: Form(
             autovalidateMode: AutovalidateMode.always,
@@ -88,9 +81,10 @@ class _ViewRecitationState extends State<ViewRecitation>
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                     controller: _titleController,
+                    readOnly: true,
                     decoration: InputDecoration(
-                        labelText: 'عنوان',
-                        hintText: 'عنوان',
+                        labelText: 'متن مرتبط',
+                        hintText: 'متن مرتبط',
                         prefixIcon: IconButton(
                           icon: Icon(Icons.open_in_browser),
                           onPressed: () async {
@@ -108,61 +102,21 @@ class _ViewRecitationState extends State<ViewRecitation>
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                     controller: _artistNameController,
+                    readOnly: true,
                     decoration: InputDecoration(
-                      labelText: 'نام خوانشگر',
-                      hintText: 'نام خوانشگر را با حروف فارسی وارد کنید',
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: TextFormField(
-                        controller: _artistUrlController,
-                        decoration: InputDecoration(
-                            labelText: 'نشانی وب',
-                            hintText: 'نشانی وب',
-                            prefixIcon: IconButton(
-                              icon: Icon(Icons.open_in_browser),
-                              onPressed: () async {
-                                var url = _artistUrlController.text;
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                } else {
-                                  throw 'خطا در نمایش نشانی $url';
-                                }
-                              },
-                            )))),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                    controller: _audioSrcController,
-                    decoration: InputDecoration(
-                      labelText: 'نام منبع',
-                      hintText: 'نام منبع',
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: TextFormField(
-                        controller: _audioSrcUrlController,
-                        decoration: InputDecoration(
-                            labelText: 'نشانی وب منبع',
-                            hintText: 'نشانی وب منبع',
-                            prefixIcon: IconButton(
-                              icon: Icon(Icons.open_in_browser),
-                              onPressed: () async {
-                                var url = _audioSrcUrlController.text;
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                } else {
-                                  throw 'خطا در نمایش نشانی $url';
-                                }
-                              },
-                            )))),
+                        labelText: 'به خوانش',
+                        hintText: 'به خوانش',
+                        prefixIcon: IconButton(
+                          icon: Icon(Icons.open_in_browser),
+                          onPressed: () async {
+                            var url = narration.audioArtistUrl;
+                            if (await canLaunch(url)) {
+                              await launch(url);
+                            } else {
+                              throw 'خطا در نمایش نشانی $url';
+                            }
+                          },
+                        ))),
               ),
               SafeArea(
                 child: Column(
