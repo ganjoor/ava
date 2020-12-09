@@ -199,6 +199,20 @@ class _MyHomePageState extends State<MyHomePage>
                           Navigator.of(context).pop();
                         },
                       ),
+                      ListTile(
+                        title: Text('نحوهٔ مشارکت'),
+                        leading: Icon(Icons.mic,
+                            color: Theme.of(context).primaryColor),
+                        onTap: () async {
+                          var url = 'http://ava.ganjoor.net/about/';
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            throw 'خطا در نمایش نشانی $url';
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ],
                   ),
                 ),
