@@ -34,6 +34,7 @@ class _ViewRecitationState extends State<ViewRecitation>
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _artistNameController = TextEditingController();
+  String _fileDownloadTitle = '';
 
   @override
   void initState() {
@@ -72,6 +73,9 @@ class _ViewRecitationState extends State<ViewRecitation>
   Widget build(BuildContext context) {
     _titleController.text = narration.poemFullTitle;
     _artistNameController.text = narration.audioArtist;
+    _fileDownloadTitle = 'دریافت فایل صوتی با حجم ' +
+        (narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2) +
+        ' مگابایت';
 
     return FocusTraversalGroup(
         child: Form(
@@ -161,6 +165,17 @@ class _ViewRecitationState extends State<ViewRecitation>
                   child: ButtonBar(
                     alignment: MainAxisAlignment.end,
                     children: [
+                      ElevatedButton(
+                        child: Text(_fileDownloadTitle),
+                        onPressed: () async {
+                          var url = narration.mp3Url;
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            throw 'خطا در نمایش نشانی $url';
+                          }
+                        },
+                      ),
                       TextButton(
                         child: Text('انصراف'),
                         onPressed: () {
