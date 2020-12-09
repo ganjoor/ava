@@ -5,6 +5,7 @@ import 'package:ava/services/published-recitations-service.dart';
 import 'package:ava/view-recitation.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(AvaApp());
@@ -160,6 +161,46 @@ class _MyHomePageState extends State<MyHomePage>
                           await _loadRecitations();
                         }),
                   ],
+                ),
+                drawer: Drawer(
+                  // Add a ListView to the drawer. This ensures the user can scroll
+                  // through the options in the drawer if there isn't enough vertical
+                  // space to fit everything.
+                  child: ListView(
+                    // Important: Remove any padding from the ListView.
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('اشتراک پادکست'),
+                        leading: Icon(Icons.music_note,
+                            color: Theme.of(context).primaryColor),
+                        onTap: () async {
+                          var url = 'http://feeds.feedburner.com/ganjoorava';
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            throw 'خطا در نمایش نشانی $url';
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ListTile(
+                        title: Text('اشتراک خبرنامه'),
+                        leading: Icon(Icons.mail,
+                            color: Theme.of(context).primaryColor),
+                        onTap: () async {
+                          var url =
+                              'https://feedburner.google.com/fb/a/mailverify?uri=ganjoorava&loc=en_US';
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            throw 'خطا در نمایش نشانی $url';
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 body: Builder(
                     builder: (context) => Center(
