@@ -61,10 +61,12 @@ class AvaAppState extends State<AvaApp> {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({Key key, this.id}) : super(key: key);
+
+  final int id;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(id);
 }
 
 class _MyHomePageState extends State<MyHomePage>
@@ -75,9 +77,32 @@ class _MyHomePageState extends State<MyHomePage>
   int _pageNumber = 1;
   int _pageSize = 20;
   String _searchTerm = '';
+  final int id;
+  PublicRecitationViewModel _recitation;
 
   PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
+
+  _MyHomePageState(this.id);
+
+  Future _loadRecitation() async {
+    setState(() {
+      _isLoading = true;
+    });
+    var res = await PublishedRecitationsService().getRecitationById(id);
+    if (res.item2.isNotEmpty) {
+      _key.currentState.showSnackBar(SnackBar(
+        content: Text("خطا در دریافت خوانش‌ها: " + res.item2),
+        backgroundColor: Colors.red,
+      ));
+    }
+    setState(() {
+      _isLoading = false;
+      if (res.item2.isEmpty) {
+        _recitation = res.item1;
+      }
+    });
+  }
 
   Future _loadRecitations() async {
     setState(() {
@@ -130,6 +155,33 @@ class _MyHomePageState extends State<MyHomePage>
         );
       },
     );
+  }
+
+  Widget get _mainChild {
+    return id == null
+        ? ListView.builder(
+            itemCount: _recitations.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: IconButton(
+                    icon: Icon(Icons.play_arrow),
+                    onPressed: () async {
+                      await _view(_recitations.items[index]);
+                    }),
+                title: Text(_recitations.items[index].audioTitle),
+                subtitle: Column(children: [
+                  Text(_recitations.items[index].poemFullTitle),
+                  Text(_recitations.items[index].audioArtist),
+                ]),
+              );
+            })
+        : _recitation == null
+            ? Text('در حال بارگذاری')
+            : ViewRecitation(
+                narration: _recitation,
+                loadingStateChanged: this._loadingStateChanged,
+                snackbarNeeded: this._snackbarNeeded,
+              );
   }
 
   @override
@@ -212,29 +264,16 @@ class _MyHomePageState extends State<MyHomePage>
                     ],
                   ),
                 ),
-                body: Builder(
-                    builder: (context) => Center(
-                        child: ListView.builder(
-                            itemCount: _recitations.items.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                leading: IconButton(
-                                    icon: Icon(Icons.play_arrow),
-                                    onPressed: () async {
-                                      await _view(_recitations.items[index]);
-                                    }),
-                                title:
-                                    Text(_recitations.items[index].audioTitle),
-                                subtitle: Column(children: [
-                                  Text(_recitations.items[index].poemFullTitle),
-                                  Text(_recitations.items[index].audioArtist),
-                                ]),
-                              );
-                            }))))));
+                body:
+                    Builder(builder: (context) => Center(child: _mainChild)))));
   }
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await _loadRecitations();
+    if (id == null) {
+      await _loadRecitations();
+    } else {
+      await _loadRecitation();
+    }
   }
 }
