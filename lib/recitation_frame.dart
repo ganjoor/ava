@@ -1,100 +1,58 @@
 import 'package:after_layout/after_layout.dart';
-import 'package:ava/models/common/paginated-items-response-model.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
-import 'package:ava/routes.dart';
 import 'package:ava/services/published-recitations-service.dart';
 import 'package:ava/view-recitation.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void main() {
-  runApp(AvaApp());
-}
+class RecitationFrame extends StatefulWidget {
+  RecitationFrame({
+    Key key,
+    this.id,
+  }) : super(key: key);
 
-class AvaApp extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => AvaAppState();
-}
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
 
-class AvaAppState extends State<AvaApp> {
-  static FluroRouter router;
-  AvaAppState() {
-    router = FluroRouter();
-    Routes.configureRoutes(router);
-  }
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'آوای گنجور',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-        ),
-        onGenerateRoute: router.generator,
-        builder: (BuildContext context, Widget child) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: Builder(
-              builder: (BuildContext context) {
-                return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaleFactor: 1.0,
-                  ),
-                  child: child,
-                );
-              },
-            ),
-          );
-        });
-  }
-}
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  final int id;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _RecitationFrameState createState() => _RecitationFrameState(id);
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with AfterLayoutMixin<MyHomePage> {
+class _RecitationFrameState extends State<RecitationFrame>
+    with AfterLayoutMixin<RecitationFrame> {
   final GlobalKey<ScaffoldMessengerState> _key =
       GlobalKey<ScaffoldMessengerState>();
+  final int id;
   bool _isLoading = false;
-  int _pageNumber = 1;
-  int _pageSize = 20;
-  String _searchTerm = '';
 
-  PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
-      PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
+  PublicRecitationViewModel _recitation;
 
-  Future _loadRecitations() async {
+  _RecitationFrameState(this.id);
+
+  Future _loadRecitation() async {
     setState(() {
       _isLoading = true;
     });
-    var res = await PublishedRecitationsService()
-        .getRecitations(_pageNumber, _pageSize, _searchTerm);
-    if (res.error.isNotEmpty) {
+    var res = await PublishedRecitationsService().getRecitationById(id);
+    if (res.item2.isNotEmpty) {
       _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: " + res.error),
+        content: Text("خطا در دریافت خوانش‌ها: " + res.item2),
         backgroundColor: Colors.red,
       ));
     }
     setState(() {
       _isLoading = false;
-      if (res.error.isEmpty) {
-        _recitations = res;
+      if (res.item2.isEmpty) {
+        _recitation = res.item1;
       }
     });
   }
@@ -112,24 +70,14 @@ class _MyHomePageState extends State<MyHomePage>
     ));
   }
 
-  Future _view(PublicRecitationViewModel recitation) async {
-    return showDialog<PublicRecitationViewModel>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        ViewRecitation _narrationView = ViewRecitation(
-          narration: recitation,
-          loadingStateChanged: this._loadingStateChanged,
-          snackbarNeeded: this._snackbarNeeded,
-        );
-        return AlertDialog(
-          title: Text(recitation.audioTitle),
-          content: SingleChildScrollView(
-            child: _narrationView,
-          ),
-        );
-      },
-    );
+  Widget get _mainChild {
+    return _recitation == null
+        ? Text('در حال بارگذاری')
+        : ViewRecitation(
+            narration: _recitation,
+            loadingStateChanged: this._loadingStateChanged,
+            snackbarNeeded: this._snackbarNeeded,
+          );
   }
 
   @override
@@ -146,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage>
             isLoading: _isLoading,
             child: Scaffold(
                 appBar: AppBar(
-                  // Here we take the value from the MyHomePage object that was created by
+                  // Here we take the value from the RecitationFrame object that was created by
                   // the App.build method, and use it to set our appbar title.
                   title: Text('آوای گنجور'),
                   actions: [
@@ -154,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage>
                         icon: Icon(Icons.refresh),
                         tooltip: 'تازه‌سازی',
                         onPressed: () async {
-                          await _loadRecitations();
+                          await _loadRecitation();
                         }),
                   ],
                 ),
@@ -214,27 +162,11 @@ class _MyHomePageState extends State<MyHomePage>
                 ),
                 body: Builder(
                     builder: (context) => Center(
-                        child: ListView.builder(
-                            itemCount: _recitations.items.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                leading: IconButton(
-                                    icon: Icon(Icons.play_arrow),
-                                    onPressed: () async {
-                                      await _view(_recitations.items[index]);
-                                    }),
-                                title:
-                                    Text(_recitations.items[index].audioTitle),
-                                subtitle: Column(children: [
-                                  Text(_recitations.items[index].poemFullTitle),
-                                  Text(_recitations.items[index].audioArtist),
-                                ]),
-                              );
-                            }))))));
+                        child: SingleChildScrollView(child: _mainChild))))));
   }
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await _loadRecitations();
+    await _loadRecitation();
   }
 }

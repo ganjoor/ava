@@ -71,11 +71,13 @@ class _ViewRecitationState extends State<ViewRecitation>
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = narration.poemFullTitle;
-    _artistNameController.text = narration.audioArtist;
-    _fileDownloadTitle = 'دریافت فایل صوتی با حجم ' +
-        (narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2) +
-        ' مگابایت';
+    _titleController.text = narration == null ? '' : narration.poemFullTitle;
+    _artistNameController.text = narration == null ? '' : narration.audioArtist;
+    _fileDownloadTitle = narration == null
+        ? ''
+        : 'دریافت فایل صوتی با حجم ' +
+            (narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2) +
+            ' مگابایت';
 
     return FocusTraversalGroup(
         child: Form(

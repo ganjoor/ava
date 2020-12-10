@@ -44,6 +44,35 @@ class PublishedRecitationsService {
     }
   }
 
+  Future<Tuple2<PublicRecitationViewModel, String>> getRecitationById(
+      int id) async {
+    try {
+      var apiRoot = GServiceAddress.Url;
+      http.Response response =
+          await http.get('$apiRoot/api/audio/published/$id', headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
+
+      if (response.statusCode == 200) {
+        var ret =
+            PublicRecitationViewModel.fromJson(json.decode(response.body));
+        return Tuple2<PublicRecitationViewModel, String>(ret, '');
+      } else {
+        return Tuple2<PublicRecitationViewModel, String>(
+            null,
+            'کد برگشتی: ' +
+                response.statusCode.toString() +
+                ' ' +
+                response.body);
+      }
+    } catch (e) {
+      return Tuple2<PublicRecitationViewModel, String>(
+          null,
+          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
+              e.toString());
+    }
+  }
+
   Future<Tuple2<List<RecitationVerseSync>, String>> getVerses(int id) async {
     try {
       var apiRoot = GServiceAddress.Url;
