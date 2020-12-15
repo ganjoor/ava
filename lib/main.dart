@@ -198,6 +198,24 @@ class _MyHomePageState extends State<MyHomePage>
               );
   }
 
+  String get currentPageText {
+    if (_recitations != null) {
+      if (_recitations.paginationMetadata != null) {
+        return 'صفحهٔ ' +
+            _recitations.paginationMetadata.currentPage.toString() +
+            ' از ' +
+            _recitations.paginationMetadata.totalPages.toString() +
+            ' (' +
+            _recitations.items.length.toString() +
+            ' از ' +
+            _recitations.paginationMetadata.totalCount.toString() +
+            ')';
+      }
+    }
+
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -278,6 +296,57 @@ class _MyHomePageState extends State<MyHomePage>
                     ],
                   ),
                 ),
+                persistentFooterButtons: [
+                  Row(children: [
+                    Text(currentPageText),
+                    IconButton(
+                      icon: Icon(Icons.first_page),
+                      tooltip: 'اولین صفحه',
+                      onPressed: () async {
+                        _pageNumber = 1;
+                        await _loadRecitations();
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.navigate_before),
+                      tooltip: 'صفحهٔ قبل',
+                      onPressed: () async {
+                        if (_pageNumber > 1) {
+                          _pageNumber--;
+                          await _loadRecitations();
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.navigate_next),
+                      tooltip: 'صفحهٔ بعد',
+                      onPressed: () async {
+                        if (_pageNumber <
+                            _recitations.paginationMetadata.totalPages) {
+                          _pageNumber++;
+                          await _loadRecitations();
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.last_page),
+                      tooltip: 'صفحهٔ آخر',
+                      onPressed: () async {
+                        if (_pageNumber !=
+                            _recitations.paginationMetadata.totalPages) {
+                          _pageNumber =
+                              _recitations.paginationMetadata.totalPages;
+                          await _loadRecitations();
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      tooltip: 'جستجو',
+                      onPressed: null,
+                    )
+                  ])
+                ],
                 body:
                     Builder(builder: (context) => Center(child: _mainChild)))));
   }
