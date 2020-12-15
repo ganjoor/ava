@@ -8,6 +8,8 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_html/html.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() {
   runApp(AvaApp());
@@ -19,6 +21,18 @@ class AvaApp extends StatefulWidget {
 }
 
 class AvaAppState extends State<AvaApp> {
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      // Remove `loading` div
+      final loader = document.getElementsByClassName('loading');
+      if (loader.isNotEmpty) {
+        loader.first.remove();
+      }
+    }
+  }
+
   static FluroRouter router;
   AvaAppState() {
     router = FluroRouter();
