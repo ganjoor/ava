@@ -98,6 +98,8 @@ class _MyHomePageState extends State<MyHomePage>
   final int id;
   PublicRecitationViewModel _recitation;
   AudioPlayer _player;
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _artistNameController = TextEditingController();
 
   PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
@@ -116,6 +118,8 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _player.dispose();
+    _titleController.dispose();
+    _artistNameController.dispose();
     super.dispose();
   }
 
@@ -139,6 +143,9 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future _loadRecitations() async {
+    if (_player.playing) {
+      await _player.stop();
+    }
     setState(() {
       _isLoading = true;
     });
@@ -156,6 +163,10 @@ class _MyHomePageState extends State<MyHomePage>
         _recitations = res;
       }
     });
+
+    if (_recitations.items.length > 0) {
+      await _expansionCallback(0, true);
+    }
   }
 
   void _loadingStateChanged(bool isLoading) {
@@ -183,21 +194,28 @@ class _MyHomePageState extends State<MyHomePage>
     return verse.verseText;
   }
 
-  void _expansionCallback(int index, bool isExpanded) async {
+  Future _expansionCallback(int index, bool isExpanded) async {
     if (_player.playing) {
       await _player.stop();
+    }
+    if (!_recitations.items[index].isExpanded) {
+      for (var item in _recitations.items) {
+        if (item.isExpanded && item.id != _recitations.items[index].id) {
+          setState(() {
+            item.isExpanded = false;
+          });
+        }
+      }
     }
     setState(() {
       _recitations.items[index].isExpanded =
           !_recitations.items[index].isExpanded;
-      if (_recitations.items[index].isExpanded) {
-        for (var item in _recitations.items) {
-          if (item.isExpanded && item.id != _recitations.items[index].id) {
-            item.isExpanded = false;
-          }
-        }
-      }
     });
+
+    if (_recitations.items[index].isExpanded) {
+      _titleController.text = _recitations.items[index].audioTitle;
+      _artistNameController.text = _recitations.items[index].audioArtist;
+    }
   }
 
   Widget get _mainChild {
@@ -206,6 +224,7 @@ class _MyHomePageState extends State<MyHomePage>
             Padding(
                 padding: EdgeInsets.all(10.0),
                 child: ExpansionPanelList(
+                    key: GlobalKey<ScaffoldMessengerState>(),
                     expansionCallback: _expansionCallback,
                     children: _recitations.items
                         .map((e) => ExpansionPanel(
@@ -223,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  initialValue: e.audioTitle,
+                                  controller: _titleController,
                                   style: TextStyle(
                                       color: Theme.of(context).primaryColor),
                                   decoration: InputDecoration(
@@ -246,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                    initialValue: e.audioArtist,
+                                    controller: _artistNameController,
                                     readOnly: true,
                                     decoration: InputDecoration(
                                         labelText: 'به خوانش',
