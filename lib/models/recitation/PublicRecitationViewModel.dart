@@ -20,6 +20,7 @@ class PublicRecitationViewModel {
   final String plainText;
   final String htmlText;
   List<RecitationVerseSync> verses;
+  bool isExpanded = false;
 
   PublicRecitationViewModel(
       {this.id,

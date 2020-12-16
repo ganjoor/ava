@@ -4,8 +4,11 @@ import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/routes.dart';
 import 'package:ava/services/published-recitations-service.dart';
 import 'package:ava/view-recitation.dart';
+import 'package:ava/widgets/audio-player-widgets.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_html/html.dart';
@@ -24,6 +27,7 @@ class AvaAppState extends State<AvaApp> {
   @override
   void initState() {
     super.initState();
+
     if (kIsWeb) {
       // Remove `loading` div
       final loader = document.getElementsByClassName('loading');
@@ -89,15 +93,31 @@ class _MyHomePageState extends State<MyHomePage>
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
   int _pageNumber = 1;
-  int _pageSize = 20;
+  int _pageSize = 5;
   String _searchTerm = '';
   final int id;
   PublicRecitationViewModel _recitation;
+  AudioPlayer _player;
 
   PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
 
   _MyHomePageState(this.id);
+
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
 
   Future _loadRecitation() async {
     setState(() {
@@ -151,44 +171,166 @@ class _MyHomePageState extends State<MyHomePage>
     ));
   }
 
-  Future _view(PublicRecitationViewModel recitation) async {
-    return showDialog<PublicRecitationViewModel>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        ViewRecitation _narrationView = ViewRecitation(
-          narration: recitation,
-          loadingStateChanged: this._loadingStateChanged,
-          snackbarNeeded: this._snackbarNeeded,
-        );
-        return AlertDialog(
-          title: Text(recitation.audioTitle),
-          content: SingleChildScrollView(
-            child: _narrationView,
-          ),
-        );
-      },
-    );
+  String getVerse(PublicRecitationViewModel narration, Duration position) {
+    if (position == null || narration == null || narration.verses == null) {
+      return '';
+    }
+    var verse = narration.verses.lastWhere(
+        (element) => element.audioStartMilliseconds <= position.inMilliseconds);
+    if (verse == null) {
+      return '';
+    }
+    return verse.verseText;
+  }
+
+  void _expansionCallback(int index, bool isExpanded) async {
+    if (_player.playing) {
+      await _player.stop();
+    }
+    setState(() {
+      _recitations.items[index].isExpanded =
+          !_recitations.items[index].isExpanded;
+      if (_recitations.items[index].isExpanded) {
+        for (var item in _recitations.items) {
+          if (item.isExpanded && item.id != _recitations.items[index].id) {
+            item.isExpanded = false;
+          }
+        }
+      }
+    });
   }
 
   Widget get _mainChild {
     return id == null
-        ? ListView.builder(
-            itemCount: _recitations.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                leading: IconButton(
-                    icon: Icon(Icons.play_arrow),
-                    onPressed: () async {
-                      await _view(_recitations.items[index]);
-                    }),
-                title: Text(_recitations.items[index].audioTitle),
-                subtitle: Column(children: [
-                  Text(_recitations.items[index].poemFullTitle),
-                  Text(_recitations.items[index].audioArtist),
-                ]),
-              );
-            })
+        ? ListView(children: [
+            Padding(
+                padding: EdgeInsets.all(10.0),
+                child: ExpansionPanelList(
+                    expansionCallback: _expansionCallback,
+                    children: _recitations.items
+                        .map((e) => ExpansionPanel(
+                            headerBuilder:
+                                (BuildContext context, bool isExpanded) {
+                              return ListTile(
+                                  leading: Icon(Icons.verified),
+                                  title: Text(e.poemFullTitle),
+                                  subtitle: Text(e.audioArtist));
+                            },
+                            isExpanded: e.isExpanded,
+                            body: FocusTraversalGroup(
+                                child: Form(
+                                    child: Wrap(children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  initialValue: e.audioTitle,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                  decoration: InputDecoration(
+                                      labelText: 'عنوان',
+                                      hintText: 'عنوان',
+                                      prefixIcon: IconButton(
+                                        icon: Icon(Icons.open_in_browser),
+                                        onPressed: () async {
+                                          var url = 'https://ganjoor.net' +
+                                              e.poemFullUrl;
+                                          if (await canLaunch(url)) {
+                                            await launch(url);
+                                          } else {
+                                            throw 'خطا در نمایش نشانی $url';
+                                          }
+                                        },
+                                      )),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                    initialValue: e.audioArtist,
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                        labelText: 'به خوانش',
+                                        hintText: 'به خوانش',
+                                        prefixIcon: IconButton(
+                                          icon: Icon(Icons.open_in_browser),
+                                          onPressed: e.audioArtistUrl.isEmpty
+                                              ? null
+                                              : () async {
+                                                  var url = e.audioArtistUrl;
+                                                  if (await canLaunch(url)) {
+                                                    await launch(url);
+                                                  } else {
+                                                    throw 'خطا در نمایش نشانی $url';
+                                                  }
+                                                },
+                                        ))),
+                              ),
+                              SafeArea(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ControlButtons(_player, e,
+                                        _loadingStateChanged, _snackbarNeeded),
+                                    StreamBuilder<Duration>(
+                                      stream: _player.durationStream,
+                                      builder: (context, snapshot) {
+                                        final duration =
+                                            snapshot.data ?? Duration.zero;
+                                        return StreamBuilder<Duration>(
+                                          stream: _player.positionStream,
+                                          builder: (context, snapshot) {
+                                            var position =
+                                                snapshot.data ?? Duration.zero;
+                                            if (position > duration) {
+                                              position = duration;
+                                            }
+                                            return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SeekBar(
+                                                    duration: duration,
+                                                    position: position,
+                                                    onChangeEnd: (newPosition) {
+                                                      _player.seek(newPosition);
+                                                    },
+                                                  ),
+                                                  Text(getVerse(e, position))
+                                                ]);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ButtonBar(
+                                    alignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        child: Text('دریافت فایل صوتی با حجم ' +
+                                            (e.mp3SizeInBytes / (1024 * 1024))
+                                                .toStringAsFixed(2) +
+                                            ' مگابایت'),
+                                        onPressed: () async {
+                                          var url = e.mp3Url;
+                                          if (await canLaunch(url)) {
+                                            await launch(url);
+                                          } else {
+                                            throw 'خطا در نمایش نشانی $url';
+                                          }
+                                        },
+                                      )
+                                    ],
+                                  )),
+                            ])))))
+                        .toList()))
+          ])
         : _recitation == null
             ? Text('در حال بارگذاری')
             : ViewRecitation(
