@@ -57,7 +57,7 @@ class AvaAppState extends State<AvaApp> {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.brown,
             fontFamily: 'Samim'),
         onGenerateRoute: router.generator,
         builder: (BuildContext context, Widget child) {
@@ -231,7 +231,8 @@ class _MyHomePageState extends State<MyHomePage>
                             headerBuilder:
                                 (BuildContext context, bool isExpanded) {
                               return ListTile(
-                                  leading: Icon(Icons.verified),
+                                  leading: Icon(Icons.speaker,
+                                      color: Theme.of(context).primaryColor),
                                   title: Text(e.poemFullTitle),
                                   subtitle: Text(e.audioArtist));
                             },
@@ -243,8 +244,6 @@ class _MyHomePageState extends State<MyHomePage>
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   controller: _titleController,
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
                                   decoration: InputDecoration(
                                       labelText: 'عنوان',
                                       hintText: 'عنوان',
@@ -266,6 +265,8 @@ class _MyHomePageState extends State<MyHomePage>
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                     controller: _artistNameController,
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
                                     readOnly: true,
                                     decoration: InputDecoration(
                                         labelText: 'به خوانش',
