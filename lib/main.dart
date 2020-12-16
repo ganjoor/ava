@@ -244,6 +244,7 @@ class _MyHomePageState extends State<MyHomePage>
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   controller: _titleController,
+                                  readOnly: true,
                                   decoration: InputDecoration(
                                       labelText: 'عنوان',
                                       hintText: 'عنوان',
