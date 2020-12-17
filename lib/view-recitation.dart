@@ -1,6 +1,5 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:ava/calbacks/g-ui-callbacks.dart';
-import 'package:ava/main.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/widgets/audio-player-widgets.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +75,7 @@ class _ViewRecitationState extends State<ViewRecitation>
     _artistNameController.text = narration == null ? '' : narration.audioArtist;
     _fileDownloadTitle = narration == null
         ? ''
-        : 'دریافت فایل صوتی با حجم ' +
+        : 'دریافت با حجم ' +
             (narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2) +
             ' مگابایت';
 
@@ -179,10 +178,16 @@ class _ViewRecitationState extends State<ViewRecitation>
                           }
                         },
                       ),
-                      TextButton(
-                        child: Text('همهٔ خوانش‌ها'),
+                      ElevatedButton(
+                        child: Text(Navigator.canPop(context)
+                            ? 'بازگشت'
+                            : 'همهٔ خوانش‌ها'),
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/');
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            Navigator.pushReplacementNamed(context, '/');
+                          }
                         },
                       )
                     ],

@@ -334,6 +334,16 @@ class _MyHomePageState extends State<MyHomePage>
                                     alignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
+                                        child: Text('#'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MyHomePage(id: e.id)));
+                                        },
+                                      ),
+                                      ElevatedButton(
                                         child: Text('متن'),
                                         onPressed: () async {
                                           var url = 'https://ganjoor.net' +
