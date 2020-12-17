@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:ava/calbacks/g-ui-callbacks.dart';
+import 'package:ava/main.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/widgets/audio-player-widgets.dart';
 import 'package:flutter/material.dart';
@@ -179,9 +180,9 @@ class _ViewRecitationState extends State<ViewRecitation>
                         },
                       ),
                       TextButton(
-                        child: Text('انصراف'),
+                        child: Text('همهٔ خوانش‌ها'),
                         onPressed: () {
-                          Navigator.of(context).pop(null);
+                          Navigator.pushReplacementNamed(context, '/');
                         },
                       )
                     ],
