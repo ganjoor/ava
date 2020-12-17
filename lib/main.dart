@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:ava/contribute.dart';
 import 'package:ava/models/common/paginated-items-response-model.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/routes.dart';
@@ -437,14 +438,12 @@ class _MyHomePageState extends State<MyHomePage>
                   actions: [
                     IconButton(
                       icon: Icon(Icons.mic),
-                      tooltip: 'نحوهٔ مشارکت',
-                      onPressed: () async {
-                        var url = 'http://ava.ganjoor.net/about/';
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'خطا در نمایش نشانی $url';
-                        }
+                      tooltip: 'من بخوانم',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Contribute()));
                       },
                     ),
                     IconButton(
