@@ -22,7 +22,7 @@ class ControlButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: Icon(Icons.volume_up),
+          icon: Icon(Icons.volume_up, color: Theme.of(context).primaryColor),
           onPressed: () {
             _showSliderDialog(
               context: context,
@@ -51,7 +51,8 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: Icon(Icons.play_arrow),
+                icon: Icon(Icons.play_arrow,
+                    color: Theme.of(context).primaryColor),
                 iconSize: 64.0,
                 onPressed: () async {
                   var service = PublishedRecitationsService();
@@ -71,13 +72,13 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: Icon(Icons.pause),
+                icon: Icon(Icons.pause, color: Theme.of(context).primaryColor),
                 iconSize: 64.0,
                 onPressed: player.pause,
               );
             } else {
               return IconButton(
-                icon: Icon(Icons.replay),
+                icon: Icon(Icons.replay, color: Theme.of(context).primaryColor),
                 iconSize: 64.0,
                 onPressed: () => player.seek(Duration.zero, index: 0),
               );
@@ -92,7 +93,7 @@ class ControlButtons extends StatelessWidget {
             onPressed: () {
               _showSliderDialog(
                 context: context,
-                title: "Adjust speed",
+                title: "تنظیم سرعت",
                 divisions: 10,
                 min: 0.5,
                 max: 1.5,

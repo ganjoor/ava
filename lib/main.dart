@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage>
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
   int _pageNumber = 1;
-  int _pageSize = 5;
+  int _pageSize = 10;
   String _searchTerm = '';
   final int id;
   PublicRecitationViewModel _recitation;
