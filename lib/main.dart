@@ -2,6 +2,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:ava/models/common/paginated-items-response-model.dart';
 import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
 import 'package:ava/routes.dart';
+import 'package:ava/search-term.dart';
 import 'package:ava/services/published-recitations-service.dart';
 import 'package:ava/view-recitation.dart';
 import 'package:ava/widgets/audio-player-widgets.dart';
@@ -216,6 +217,21 @@ class _MyHomePageState extends State<MyHomePage>
       _titleController.text = _recitations.items[index].audioTitle;
       _artistNameController.text = _recitations.items[index].audioArtist;
     }
+  }
+
+  Future<String> _getSearchParams() async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('جستجو بر اساس خوانشگر یا متن شعر'),
+          content: SingleChildScrollView(
+            child: SearchTerm(term: _searchTerm),
+          ),
+        );
+      },
+    );
   }
 
   Widget get _mainChild {
@@ -540,7 +556,15 @@ class _MyHomePageState extends State<MyHomePage>
                     IconButton(
                       icon: Icon(Icons.search),
                       tooltip: 'جستجو',
-                      onPressed: null,
+                      onPressed: () async {
+                        var res = await _getSearchParams();
+                        if (res != null) {
+                          setState(() {
+                            _searchTerm = res;
+                          });
+                          await _loadRecitations();
+                        }
+                      },
                     )
                   ])
                 ],
