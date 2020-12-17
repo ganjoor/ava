@@ -334,7 +334,19 @@ class _MyHomePageState extends State<MyHomePage>
                                     alignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
-                                        child: Text('دریافت فایل صوتی با حجم ' +
+                                        child: Text('متن'),
+                                        onPressed: () async {
+                                          var url = 'https://ganjoor.net' +
+                                              e.poemFullUrl;
+                                          if (await canLaunch(url)) {
+                                            await launch(url);
+                                          } else {
+                                            throw 'خطا در نمایش نشانی $url';
+                                          }
+                                        },
+                                      ),
+                                      ElevatedButton(
+                                        child: Text('دریافت با حجم ' +
                                             (e.mp3SizeInBytes / (1024 * 1024))
                                                 .toStringAsFixed(2) +
                                             ' مگابایت'),
