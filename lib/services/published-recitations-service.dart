@@ -14,7 +14,8 @@ class PublishedRecitationsService {
     try {
       var apiRoot = GServiceAddress.Url;
       http.Response response = await http.get(
-          '$apiRoot/api/audio/published?PageNumber=$pageNumber&PageSize=$pageSize&searchTerm=$searchTerm',
+          Uri.parse(
+              '$apiRoot/api/audio/published?PageNumber=$pageNumber&PageSize=$pageSize&searchTerm=$searchTerm'),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
           });
@@ -48,8 +49,8 @@ class PublishedRecitationsService {
       int id) async {
     try {
       var apiRoot = GServiceAddress.Url;
-      http.Response response =
-          await http.get('$apiRoot/api/audio/published/$id', headers: {
+      http.Response response = await http
+          .get(Uri.parse('$apiRoot/api/audio/published/$id'), headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       });
 
@@ -76,7 +77,8 @@ class PublishedRecitationsService {
   Future<Tuple2<List<RecitationVerseSync>, String>> getVerses(int id) async {
     try {
       var apiRoot = GServiceAddress.Url;
-      http.Response response = await http.get('$apiRoot/api/audio/verses/$id',
+      http.Response response = await http.get(
+          Uri.parse('$apiRoot/api/audio/verses/$id'),
           headers: {'Content-Type': 'application/json; charset=UTF-8'});
 
       List<RecitationVerseSync> ret = [];
