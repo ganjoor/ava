@@ -509,7 +509,7 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 ),
                 persistentFooterButtons: [
-                  Row(children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                     Text(currentPageText),
                     IconButton(
                       icon: Icon(Icons.first_page),
