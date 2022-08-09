@@ -5,7 +5,7 @@ import 'package:ava/widgets/audio-player-widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ViewRecitation extends StatefulWidget {
   final PublicRecitationViewModel narration;
@@ -93,9 +93,9 @@ class _ViewRecitationState extends State<ViewRecitation>
                           icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
                             var url =
-                                'https://ganjoor.net' + narration.poemFullUrl;
-                            if (await canLaunch(url)) {
-                              await launch(url);
+                                'https://ganjoor.net${narration.poemFullUrl}';
+                            if (await canLaunchUrlString(url)) {
+                              await launchUrlString(url);
                             } else {
                               throw 'خطا در نمایش نشانی $url';
                             }
@@ -114,8 +114,8 @@ class _ViewRecitationState extends State<ViewRecitation>
                           icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
                             var url = narration.audioArtistUrl;
-                            if (await canLaunch(url)) {
-                              await launch(url);
+                            if (await canLaunchUrlString(url)) {
+                              await launchUrlString(url);
                             } else {
                               throw 'خطا در نمایش نشانی $url';
                             }
@@ -169,8 +169,8 @@ class _ViewRecitationState extends State<ViewRecitation>
                         child: Text(_fileDownloadTitle),
                         onPressed: () async {
                           var url = narration.mp3Url;
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Contribute extends StatefulWidget {
   const Contribute({Key key}) : super(key: key);
@@ -37,8 +37,8 @@ class _ContributeState extends State<Contribute> {
                             'برای مطالعهٔ کامل دستورالعمل مشارکت اینجا را ببینید'),
                         onPressed: () async {
                           var url = 'http://ava.ganjoor.net/about/';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }

@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_html/html.dart' hide Text, Navigator;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher_string.dart';
 
 void main() {
   runApp(const AvaApp());
@@ -272,8 +272,8 @@ class _MyHomePageState extends State<MyHomePage>
                                         onPressed: () async {
                                           var url = 'https://ganjoor.net' +
                                               e.poemFullUrl;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -297,8 +297,8 @@ class _MyHomePageState extends State<MyHomePage>
                                               ? null
                                               : () async {
                                                   var url = e.audioArtistUrl;
-                                                  if (await canLaunch(url)) {
-                                                    await launch(url);
+                                                  if (await canLaunchUrlString(url)) {
+                                                    await launchUrlString(url);
                                                   } else {
                                                     throw 'خطا در نمایش نشانی $url';
                                                   }
@@ -367,8 +367,8 @@ class _MyHomePageState extends State<MyHomePage>
                                         onPressed: () async {
                                           var url = 'https://ganjoor.net' +
                                               e.poemFullUrl;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -381,8 +381,8 @@ class _MyHomePageState extends State<MyHomePage>
                                             ' مگابایت'),
                                         onPressed: () async {
                                           var url = e.mp3Url;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -470,8 +470,8 @@ class _MyHomePageState extends State<MyHomePage>
                             color: Theme.of(context).primaryColor),
                         onTap: () async {
                           var url = 'http://feeds.feedburner.com/ganjoorava';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
@@ -485,8 +485,8 @@ class _MyHomePageState extends State<MyHomePage>
                         onTap: () async {
                           var url =
                               'https://feedburner.google.com/fb/a/mailverify?uri=ganjoorava&loc=en_US';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
@@ -499,8 +499,8 @@ class _MyHomePageState extends State<MyHomePage>
                             color: Theme.of(context).primaryColor),
                         onTap: () async {
                           var url = 'http://ava.ganjoor.net/about/';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
