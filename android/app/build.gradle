@@ -54,9 +54,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            multiDexEnabled = true
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            minifyEnabled true
+            multiDexEnabled = false
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
     }
@@ -68,4 +76,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    debugImplementation("androidx.multidex:multidex:2.0.1")
 }
