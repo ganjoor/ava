@@ -18,7 +18,7 @@ class ViewRecitation extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ViewRecitationState(
-      this.narration, this.loadingStateChanged, this.snackbarNeeded);
+      narration, loadingStateChanged, snackbarNeeded);
 }
 
 class _ViewRecitationState extends State<ViewRecitation>
@@ -32,15 +32,15 @@ class _ViewRecitationState extends State<ViewRecitation>
   _ViewRecitationState(
       this.narration, this.loadingStateChanged, this.snackbarNeeded);
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _artistNameController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _artistNameController = TextEditingController();
   String _fileDownloadTitle = '';
 
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
   }
@@ -75,9 +75,7 @@ class _ViewRecitationState extends State<ViewRecitation>
     _artistNameController.text = narration == null ? '' : narration.audioArtist;
     _fileDownloadTitle = narration == null
         ? ''
-        : 'دریافت با حجم ' +
-            (narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2) +
-            ' مگابایت';
+        : 'دریافت با حجم ${(narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2)} مگابایت';
 
     return FocusTraversalGroup(
         child: Form(
@@ -92,7 +90,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                         labelText: 'متن مرتبط',
                         hintText: 'متن مرتبط',
                         prefixIcon: IconButton(
-                          icon: Icon(Icons.open_in_browser),
+                          icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
                             var url =
                                 'https://ganjoor.net' + narration.poemFullUrl;
@@ -113,7 +111,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                         labelText: 'به خوانش',
                         hintText: 'به خوانش',
                         prefixIcon: IconButton(
-                          icon: Icon(Icons.open_in_browser),
+                          icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
                             var url = narration.audioArtistUrl;
                             if (await canLaunch(url)) {
@@ -129,8 +127,8 @@ class _ViewRecitationState extends State<ViewRecitation>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ControlButtons(_player, narration, this.loadingStateChanged,
-                        this.snackbarNeeded),
+                    ControlButtons(_player, narration, loadingStateChanged,
+                        snackbarNeeded),
                     StreamBuilder<Duration>(
                       stream: _player.durationStream,
                       builder: (context, snapshot) {

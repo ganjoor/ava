@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Contribute extends StatefulWidget {
+  const Contribute({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _ContributeState();
 }
@@ -13,11 +15,10 @@ class _ContributeState extends State<Contribute> {
         appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: Text('آوای گنجور')),
+            title: const Text('آوای گنجور')),
         body: Builder(
             builder: (context) => Container(
-                decoration:
-                    new BoxDecoration(color: Theme.of(context).primaryColor),
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                 child: Align(
                     alignment: Alignment.topRight,
                     child: Column(children: [
@@ -32,7 +33,7 @@ class _ContributeState extends State<Contribute> {
                       ),
                       Center(
                           child: ElevatedButton(
-                        child: Text(
+                        child: const Text(
                             'برای مطالعهٔ کامل دستورالعمل مشارکت اینجا را ببینید'),
                         onPressed: () async {
                           var url = 'http://ava.ganjoor.net/about/';
