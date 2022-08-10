@@ -12,15 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' hide Text, Navigator;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher_string.dart';
 
 void main() {
-  runApp(AvaApp());
+  runApp(const AvaApp());
 }
 
 class AvaApp extends StatefulWidget {
+  const AvaApp({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => AvaAppState();
 }
@@ -112,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     _player = AudioPlayer();
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
   }
@@ -173,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _loadingStateChanged(bool isLoading) {
     setState(() {
-      this._isLoading = isLoading;
+      _isLoading = isLoading;
     });
   }
 
@@ -226,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('جستجو بر اساس خوانشگر یا متن شعر'),
+          title: const Text('جستجو بر اساس خوانشگر یا متن شعر'),
           content: SingleChildScrollView(
             child: SearchTerm(term: _searchTerm),
           ),
@@ -239,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage>
     return id == null
         ? ListView(children: [
             Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: ExpansionPanelList(
                     key: GlobalKey<ScaffoldMessengerState>(),
                     expansionCallback: _expansionCallback,
@@ -266,12 +268,12 @@ class _MyHomePageState extends State<MyHomePage>
                                       labelText: 'عنوان',
                                       hintText: 'عنوان',
                                       prefixIcon: IconButton(
-                                        icon: Icon(Icons.open_in_browser),
+                                        icon: const Icon(Icons.open_in_browser),
                                         onPressed: () async {
                                           var url = 'https://ganjoor.net' +
                                               e.poemFullUrl;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -290,13 +292,13 @@ class _MyHomePageState extends State<MyHomePage>
                                         labelText: 'به خوانش',
                                         hintText: 'به خوانش',
                                         prefixIcon: IconButton(
-                                          icon: Icon(Icons.open_in_browser),
+                                          icon: const Icon(Icons.open_in_browser),
                                           onPressed: e.audioArtistUrl.isEmpty
                                               ? null
                                               : () async {
                                                   var url = e.audioArtistUrl;
-                                                  if (await canLaunch(url)) {
-                                                    await launch(url);
+                                                  if (await canLaunchUrlString(url)) {
+                                                    await launchUrlString(url);
                                                   } else {
                                                     throw 'خطا در نمایش نشانی $url';
                                                   }
@@ -351,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage>
                                     alignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
-                                        child: Text('#'),
+                                        child: const Text('#'),
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -361,12 +363,12 @@ class _MyHomePageState extends State<MyHomePage>
                                         },
                                       ),
                                       ElevatedButton(
-                                        child: Text('متن'),
+                                        child: const Text('متن'),
                                         onPressed: () async {
                                           var url = 'https://ganjoor.net' +
                                               e.poemFullUrl;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -379,8 +381,8 @@ class _MyHomePageState extends State<MyHomePage>
                                             ' مگابایت'),
                                         onPressed: () async {
                                           var url = e.mp3Url;
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
+                                          if (await canLaunchUrlString(url)) {
+                                            await launchUrlString(url);
                                           } else {
                                             throw 'خطا در نمایش نشانی $url';
                                           }
@@ -392,11 +394,11 @@ class _MyHomePageState extends State<MyHomePage>
                         .toList()))
           ])
         : _recitation == null
-            ? Text('در حال بارگذاری')
+            ? const Text('در حال بارگذاری')
             : ViewRecitation(
                 narration: _recitation,
-                loadingStateChanged: this._loadingStateChanged,
-                snackbarNeeded: this._snackbarNeeded,
+                loadingStateChanged: _loadingStateChanged,
+                snackbarNeeded: _snackbarNeeded,
               );
   }
 
@@ -434,10 +436,10 @@ class _MyHomePageState extends State<MyHomePage>
                 appBar: AppBar(
                   // Here we take the value from the MyHomePage object that was created by
                   // the App.build method, and use it to set our appbar title.
-                  title: Text('آوای گنجور'),
+                  title: const Text('آوای گنجور'),
                   actions: [
                     IconButton(
-                      icon: Icon(Icons.mic),
+                      icon: const Icon(Icons.mic),
                       tooltip: 'من بخوانم',
                       onPressed: () {
                         Navigator.push(
@@ -447,7 +449,7 @@ class _MyHomePageState extends State<MyHomePage>
                       },
                     ),
                     IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         tooltip: 'تازه‌سازی',
                         onPressed: () async {
                           await _loadRecitations();
@@ -463,13 +465,13 @@ class _MyHomePageState extends State<MyHomePage>
                     padding: EdgeInsets.zero,
                     children: <Widget>[
                       ListTile(
-                        title: Text('اشتراک پادکست'),
+                        title: const Text('اشتراک پادکست'),
                         leading: Icon(Icons.music_note,
                             color: Theme.of(context).primaryColor),
                         onTap: () async {
                           var url = 'http://feeds.feedburner.com/ganjoorava';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
@@ -477,14 +479,14 @@ class _MyHomePageState extends State<MyHomePage>
                         },
                       ),
                       ListTile(
-                        title: Text('اشتراک خبرنامه'),
+                        title: const Text('اشتراک خبرنامه'),
                         leading: Icon(Icons.mail,
                             color: Theme.of(context).primaryColor),
                         onTap: () async {
                           var url =
                               'https://feedburner.google.com/fb/a/mailverify?uri=ganjoorava&loc=en_US';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
@@ -492,13 +494,13 @@ class _MyHomePageState extends State<MyHomePage>
                         },
                       ),
                       ListTile(
-                        title: Text('نحوهٔ مشارکت'),
+                        title: const Text('نحوهٔ مشارکت'),
                         leading: Icon(Icons.mic,
                             color: Theme.of(context).primaryColor),
                         onTap: () async {
                           var url = 'http://ava.ganjoor.net/about/';
-                          if (await canLaunch(url)) {
-                            await launch(url);
+                          if (await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
@@ -512,7 +514,7 @@ class _MyHomePageState extends State<MyHomePage>
                   Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                     Text(currentPageText),
                     IconButton(
-                      icon: Icon(Icons.first_page),
+                      icon: const Icon(Icons.first_page),
                       tooltip: 'اولین صفحه',
                       onPressed: () async {
                         _pageNumber = 1;
@@ -520,7 +522,7 @@ class _MyHomePageState extends State<MyHomePage>
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.navigate_before),
+                      icon: const Icon(Icons.navigate_before),
                       tooltip: 'صفحهٔ قبل',
                       onPressed: () async {
                         if (_pageNumber > 1) {
@@ -530,7 +532,7 @@ class _MyHomePageState extends State<MyHomePage>
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.navigate_next),
+                      icon: const Icon(Icons.navigate_next),
                       tooltip: 'صفحهٔ بعد',
                       onPressed: () async {
                         if (_pageNumber <
@@ -541,7 +543,7 @@ class _MyHomePageState extends State<MyHomePage>
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.last_page),
+                      icon: const Icon(Icons.last_page),
                       tooltip: 'صفحهٔ آخر',
                       onPressed: () async {
                         if (_pageNumber !=
@@ -553,7 +555,7 @@ class _MyHomePageState extends State<MyHomePage>
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.search),
+                      icon: const Icon(Icons.search),
                       tooltip: 'جستجو',
                       onPressed: () async {
                         var res = await _getSearchParams();

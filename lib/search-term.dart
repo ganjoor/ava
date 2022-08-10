@@ -5,13 +5,13 @@ class SearchTerm extends StatefulWidget {
 
   const SearchTerm({Key key, this.term}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => _SearchTermState(this.term);
+  State<StatefulWidget> createState() => _SearchTermState(term);
 }
 
 class _SearchTermState extends State<SearchTerm> {
   final String term;
 
-  TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
 
   _SearchTermState(this.term);
 
@@ -24,7 +24,7 @@ class _SearchTermState extends State<SearchTerm> {
   @override
   void initState() {
     super.initState();
-    _searchController.text = this.term;
+    _searchController.text = term;
   }
 
   @override
@@ -37,7 +37,7 @@ class _SearchTermState extends State<SearchTerm> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   controller: _searchController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'متن جستجو',
                     hintText: 'متن جستجو',
                   ),
@@ -49,13 +49,13 @@ class _SearchTermState extends State<SearchTerm> {
                     alignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
-                        child: Text('تأیید'),
+                        child: const Text('تأیید'),
                         onPressed: () {
                           Navigator.of(context).pop(_searchController.text);
                         },
                       ),
                       TextButton(
-                        child: Text('انصراف'),
+                        child: const Text('انصراف'),
                         onPressed: () {
                           Navigator.of(context).pop(null);
                         },
