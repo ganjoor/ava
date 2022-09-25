@@ -3,12 +3,12 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
-  static Handler _homehandler =
+  static final Handler _homehandler =
       Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return MyHomePage();
+    return const MyHomePage();
   });
 
-  static Handler _viewHandler =
+  static final Handler _viewHandler =
       Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     int id = int.parse(params["id"]?.first);
     return MyHomePage(id: id);

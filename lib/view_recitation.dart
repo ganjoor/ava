@@ -1,7 +1,7 @@
 import 'package:after_layout/after_layout.dart';
-import 'package:ava/calbacks/g-ui-callbacks.dart';
-import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
-import 'package:ava/widgets/audio-player-widgets.dart';
+import 'package:ava/calbacks/g_ui_callbacks.dart';
+import 'package:ava/models/recitation/public_recitation_viewmodel.dart';
+import 'package:ava/widgets/audio_player_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -18,19 +18,16 @@ class ViewRecitation extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ViewRecitationState(
-      narration, loadingStateChanged, snackbarNeeded);
+      );
 }
 
 class _ViewRecitationState extends State<ViewRecitation>
     with AfterLayoutMixin<ViewRecitation> {
-  final PublicRecitationViewModel narration;
-  final LoadingStateChanged loadingStateChanged;
-  final SnackbarNeeded snackbarNeeded;
+ 
 
   AudioPlayer _player;
 
-  _ViewRecitationState(
-      this.narration, this.loadingStateChanged, this.snackbarNeeded);
+
 
   final _titleController = TextEditingController();
   final _artistNameController = TextEditingController();
@@ -71,11 +68,11 @@ class _ViewRecitationState extends State<ViewRecitation>
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = narration == null ? '' : narration.poemFullTitle;
-    _artistNameController.text = narration == null ? '' : narration.audioArtist;
-    _fileDownloadTitle = narration == null
+    _titleController.text = widget.narration == null ? '' : widget.narration.poemFullTitle;
+    _artistNameController.text = widget.narration == null ? '' : widget.narration.audioArtist;
+    _fileDownloadTitle = widget.narration == null
         ? ''
-        : 'دریافت با حجم ${(narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2)} مگابایت';
+        : 'دریافت با حجم ${(widget.narration.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2)} مگابایت';
 
     return FocusTraversalGroup(
         child: Form(
@@ -93,7 +90,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                           icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
                             var url =
-                                'https://ganjoor.net${narration.poemFullUrl}';
+                                'https://ganjoor.net${widget.narration.poemFullUrl}';
                             if (await canLaunchUrlString(url)) {
                               await launchUrlString(url);
                             } else {
@@ -113,7 +110,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                         prefixIcon: IconButton(
                           icon: const Icon(Icons.open_in_browser),
                           onPressed: () async {
-                            var url = narration.audioArtistUrl;
+                            var url = widget.narration.audioArtistUrl;
                             if (await canLaunchUrlString(url)) {
                               await launchUrlString(url);
                             } else {
@@ -127,8 +124,8 @@ class _ViewRecitationState extends State<ViewRecitation>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ControlButtons(_player, narration, loadingStateChanged,
-                        snackbarNeeded),
+                    ControlButtons(_player, widget.narration, widget.loadingStateChanged,
+                        widget.snackbarNeeded),
                     StreamBuilder<Duration>(
                       stream: _player.durationStream,
                       builder: (context, snapshot) {
@@ -151,7 +148,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                                       _player.seek(newPosition);
                                     },
                                   ),
-                                  Text(getVerse(narration, position))
+                                  Text(getVerse(widget.narration, position))
                                 ]);
                           },
                         );
@@ -168,7 +165,7 @@ class _ViewRecitationState extends State<ViewRecitation>
                       ElevatedButton(
                         child: Text(_fileDownloadTitle),
                         onPressed: () async {
-                          var url = narration.mp3Url;
+                          var url = widget.narration.mp3Url;
                           if (await canLaunchUrlString(url)) {
                             await launchUrlString(url);
                           } else {

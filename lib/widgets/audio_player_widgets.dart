@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:ava/calbacks/g-ui-callbacks.dart';
-import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
-import 'package:ava/services/published-recitations-service.dart';
+import 'package:ava/calbacks/g_ui_callbacks.dart';
+import 'package:ava/models/recitation/public_recitation_viewmodel.dart';
+import 'package:ava/services/published_recitations_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:just_audio/just_audio.dart';
@@ -14,7 +14,9 @@ class ControlButtons extends StatelessWidget {
   final SnackbarNeeded snackbarNeeded;
 
   const ControlButtons(this.player, this.narration, this.loadingStateChanged,
-      this.snackbarNeeded, {Key key}) : super(key: key);
+      this.snackbarNeeded,
+      {Key key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,8 @@ class SeekBar extends StatefulWidget {
   final ValueChanged<Duration> onChanged;
   final ValueChanged<Duration> onChangeEnd;
 
-  const SeekBar({Key key,
+  const SeekBar({
+    Key key,
     @required this.duration,
     @required this.position,
     this.onChanged,
@@ -122,7 +125,7 @@ class SeekBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SeekBarState createState() => _SeekBarState();
+  State<SeekBar> createState() => _SeekBarState();
 }
 
 class _SeekBarState extends State<SeekBar> {
@@ -185,7 +188,7 @@ _showSliderDialog({
       title: Text(title, textAlign: TextAlign.center),
       content: StreamBuilder<double>(
         stream: stream,
-        builder: (context, snapshot) => Container(
+        builder: (context, snapshot) => SizedBox(
           height: 100.0,
           child: Column(
             children: [

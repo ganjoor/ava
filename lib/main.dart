@@ -1,12 +1,12 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:ava/contribute.dart';
-import 'package:ava/models/common/paginated-items-response-model.dart';
-import 'package:ava/models/recitation/PublicRecitationViewModel.dart';
+import 'package:ava/models/common/paginated_items_response_model.dart';
+import 'package:ava/models/recitation/public_recitation_viewmodel.dart';
 import 'package:ava/routes.dart';
-import 'package:ava/search-term.dart';
-import 'package:ava/services/published-recitations-service.dart';
-import 'package:ava/view-recitation.dart';
-import 'package:ava/widgets/audio-player-widgets.dart';
+import 'package:ava/search_term.dart';
+import 'package:ava/services/published_recitations_service.dart';
+import 'package:ava/view_recitation.dart';
+import 'package:ava/widgets/audio_player_widgets.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,12 +83,12 @@ class AvaAppState extends State<AvaApp> {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.id}) : super(key: key);
+  const MyHomePage({Key key, this.id}) : super(key: key);
 
   final int id;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(id);
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage>
@@ -97,18 +97,15 @@ class _MyHomePageState extends State<MyHomePage>
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
   int _pageNumber = 1;
-  int _pageSize = 10;
+  final int _pageSize = 10;
   String _searchTerm = '';
-  final int id;
   PublicRecitationViewModel _recitation;
   AudioPlayer _player;
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _artistNameController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _artistNameController = TextEditingController();
 
   PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
-
-  _MyHomePageState(this.id);
 
   @override
   void initState() {
@@ -131,10 +128,10 @@ class _MyHomePageState extends State<MyHomePage>
     setState(() {
       _isLoading = true;
     });
-    var res = await PublishedRecitationsService().getRecitationById(id);
+    var res = await PublishedRecitationsService().getRecitationById(widget.id);
     if (res.item2.isNotEmpty) {
       _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: " + res.item2),
+        content: Text("خطا در دریافت خوانش‌ها: ${res.item2}"),
         backgroundColor: Colors.red,
       ));
     }
@@ -157,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage>
         .getRecitations(_pageNumber, _pageSize, _searchTerm);
     if (res.error.isNotEmpty) {
       _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: " + res.error),
+        content: Text("خطا در دریافت خوانش‌ها: ${res.error}"),
         backgroundColor: Colors.red,
       ));
     }
@@ -168,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-    if (_recitations.items.length > 0) {
+    if (_recitations.items.isNotEmpty) {
       await _expansionCallback(0, true);
     }
   }
@@ -238,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Widget get _mainChild {
-    return id == null
+    return widget.id == null
         ? ListView(children: [
             Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -270,8 +267,8 @@ class _MyHomePageState extends State<MyHomePage>
                                       prefixIcon: IconButton(
                                         icon: const Icon(Icons.open_in_browser),
                                         onPressed: () async {
-                                          var url = 'https://ganjoor.net' +
-                                              e.poemFullUrl;
+                                          var url =
+                                              'https://ganjoor.net${e.poemFullUrl}';
                                           if (await canLaunchUrlString(url)) {
                                             await launchUrlString(url);
                                           } else {
@@ -292,12 +289,14 @@ class _MyHomePageState extends State<MyHomePage>
                                         labelText: 'به خوانش',
                                         hintText: 'به خوانش',
                                         prefixIcon: IconButton(
-                                          icon: const Icon(Icons.open_in_browser),
+                                          icon:
+                                              const Icon(Icons.open_in_browser),
                                           onPressed: e.audioArtistUrl.isEmpty
                                               ? null
                                               : () async {
                                                   var url = e.audioArtistUrl;
-                                                  if (await canLaunchUrlString(url)) {
+                                                  if (await canLaunchUrlString(
+                                                      url)) {
                                                     await launchUrlString(url);
                                                   } else {
                                                     throw 'خطا در نمایش نشانی $url';
@@ -365,8 +364,8 @@ class _MyHomePageState extends State<MyHomePage>
                                       ElevatedButton(
                                         child: const Text('متن'),
                                         onPressed: () async {
-                                          var url = 'https://ganjoor.net' +
-                                              e.poemFullUrl;
+                                          var url =
+                                              'https://ganjoor.net${e.poemFullUrl}';
                                           if (await canLaunchUrlString(url)) {
                                             await launchUrlString(url);
                                           } else {
@@ -375,10 +374,8 @@ class _MyHomePageState extends State<MyHomePage>
                                         },
                                       ),
                                       ElevatedButton(
-                                        child: Text('دریافت با حجم ' +
-                                            (e.mp3SizeInBytes / (1024 * 1024))
-                                                .toStringAsFixed(2) +
-                                            ' مگابایت'),
+                                        child: Text(
+                                            'دریافت با حجم ${(e.mp3SizeInBytes / (1024 * 1024)).toStringAsFixed(2)} مگابایت'),
                                         onPressed: () async {
                                           var url = e.mp3Url;
                                           if (await canLaunchUrlString(url)) {
@@ -405,15 +402,7 @@ class _MyHomePageState extends State<MyHomePage>
   String get currentPageText {
     if (_recitations != null) {
       if (_recitations.paginationMetadata != null) {
-        return 'صفحهٔ ' +
-            _recitations.paginationMetadata.currentPage.toString() +
-            ' از ' +
-            _recitations.paginationMetadata.totalPages.toString() +
-            ' (' +
-            _recitations.items.length.toString() +
-            ' از ' +
-            _recitations.paginationMetadata.totalCount.toString() +
-            ')';
+        return 'صفحهٔ ${_recitations.paginationMetadata.currentPage} از ${_recitations.paginationMetadata.totalPages} (${_recitations.items.length} از ${_recitations.paginationMetadata.totalCount})';
       }
     }
 
@@ -445,7 +434,7 @@ class _MyHomePageState extends State<MyHomePage>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Contribute()));
+                                builder: (context) => const Contribute()));
                       },
                     ),
                     IconButton(
@@ -475,6 +464,7 @@ class _MyHomePageState extends State<MyHomePage>
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
                       ),
@@ -490,6 +480,7 @@ class _MyHomePageState extends State<MyHomePage>
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
                       ),
@@ -504,6 +495,7 @@ class _MyHomePageState extends State<MyHomePage>
                           } else {
                             throw 'خطا در نمایش نشانی $url';
                           }
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
                       ),
@@ -575,7 +567,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    if (id == null) {
+    if (widget.id == null) {
       await _loadRecitations();
     } else {
       await _loadRecitation();

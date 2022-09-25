@@ -5,15 +5,13 @@ class SearchTerm extends StatefulWidget {
 
   const SearchTerm({Key key, this.term}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => _SearchTermState(term);
+  State<StatefulWidget> createState() => _SearchTermState();
 }
 
 class _SearchTermState extends State<SearchTerm> {
-  final String term;
 
   final _searchController = TextEditingController();
 
-  _SearchTermState(this.term);
 
   @override
   void dispose() {
@@ -24,7 +22,7 @@ class _SearchTermState extends State<SearchTerm> {
   @override
   void initState() {
     super.initState();
-    _searchController.text = term;
+    _searchController.text = widget.term;
   }
 
   @override

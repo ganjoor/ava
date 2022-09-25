@@ -1,4 +1,4 @@
-import 'package:ava/models/common/pagination-metadata.dart';
+import 'package:ava/models/common/pagination_metadata.dart';
 
 class PaginatedItemsResponseModel<T> {
   final List<T> items;
