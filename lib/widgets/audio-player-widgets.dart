@@ -13,8 +13,8 @@ class ControlButtons extends StatelessWidget {
   final LoadingStateChanged loadingStateChanged;
   final SnackbarNeeded snackbarNeeded;
 
-  ControlButtons(this.player, this.narration, this.loadingStateChanged,
-      this.snackbarNeeded);
+  const ControlButtons(this.player, this.narration, this.loadingStateChanged,
+      this.snackbarNeeded, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +44,10 @@ class ControlButtons extends StatelessWidget {
             if (processingState == ProcessingState.loading ||
                 processingState == ProcessingState.buffering) {
               return Container(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 width: 64.0,
                 height: 64.0,
-                child: CircularProgressIndicator(),
+                child: const CircularProgressIndicator(),
               );
             } else if (playing != true) {
               return IconButton(
@@ -56,17 +56,17 @@ class ControlButtons extends StatelessWidget {
                 iconSize: 64.0,
                 onPressed: () async {
                   var service = PublishedRecitationsService();
-                  if (this.narration.verses == null) {
-                    this.loadingStateChanged(true);
-                    var res = await service.getVerses(this.narration.id);
-                    this.loadingStateChanged(false);
+                  if (narration.verses == null) {
+                    loadingStateChanged(true);
+                    var res = await service.getVerses(narration.id);
+                    loadingStateChanged(false);
                     if (res.item2.isNotEmpty) {
-                      this.snackbarNeeded(res.item2);
+                      snackbarNeeded(res.item2);
                     } else {
-                      this.narration.verses = res.item1;
+                      narration.verses = res.item1;
                     }
                   }
-                  player.setUrl(this.narration.mp3Url);
+                  player.setUrl(narration.mp3Url);
                   player.play();
                 },
               );
@@ -89,7 +89,7 @@ class ControlButtons extends StatelessWidget {
           stream: player.speedStream,
           builder: (context, snapshot) => IconButton(
             icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () {
               _showSliderDialog(
                 context: context,
@@ -114,12 +114,12 @@ class SeekBar extends StatefulWidget {
   final ValueChanged<Duration> onChanged;
   final ValueChanged<Duration> onChangeEnd;
 
-  SeekBar({
+  const SeekBar({Key key,
     @required this.duration,
     @required this.position,
     this.onChanged,
     this.onChangeEnd,
-  });
+  }) : super(key: key);
 
   @override
   _SeekBarState createState() => _SeekBarState();
@@ -190,7 +190,7 @@ _showSliderDialog({
           child: Column(
             children: [
               Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: 'Fixed',
                       fontWeight: FontWeight.bold,
                       fontSize: 24.0)),

@@ -33,15 +33,11 @@ class PublishedRecitationsService {
             error: '');
       } else {
         return PaginatedItemsResponseModel<PublicRecitationViewModel>(
-            error: 'کد برگشتی: ' +
-                response.statusCode.toString() +
-                ' ' +
-                response.body);
+            error: 'کد برگشتی: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       return PaginatedItemsResponseModel<PublicRecitationViewModel>(
-          error: 'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
-              e.toString());
+          error: 'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: $e');
     }
   }
 
@@ -61,16 +57,12 @@ class PublishedRecitationsService {
       } else {
         return Tuple2<PublicRecitationViewModel, String>(
             null,
-            'کد برگشتی: ' +
-                response.statusCode.toString() +
-                ' ' +
-                response.body);
+            'کد برگشتی: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       return Tuple2<PublicRecitationViewModel, String>(
           null,
-          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
-              e.toString());
+          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: $e');
     }
   }
 
@@ -91,16 +83,12 @@ class PublishedRecitationsService {
       } else {
         return Tuple2<List<RecitationVerseSync>, String>(
             null,
-            'کد برگشتی: ' +
-                response.statusCode.toString() +
-                ' ' +
-                response.body);
+            'کد برگشتی: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       return Tuple2<List<RecitationVerseSync>, String>(
           null,
-          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: ' +
-              e.toString());
+          'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: $e');
     }
   }
 }
