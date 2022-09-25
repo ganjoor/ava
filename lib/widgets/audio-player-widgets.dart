@@ -26,7 +26,7 @@ class ControlButtons extends StatelessWidget {
           onPressed: () {
             _showSliderDialog(
               context: context,
-              title: "Adjust volume",
+              title: "تنظیم صدا",
               divisions: 10,
               min: 0.0,
               max: 1.0,
