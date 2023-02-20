@@ -34,7 +34,7 @@ dependencies:
   just_audio: ^0.9.31
   url_launcher: ^6.1.9
   tuple: ^2.0.1
-  fluro: ^2.0.4
+  fluro: ^2.0.5
   universal_html: ^2.0.8
 
 dev_dependencies:
