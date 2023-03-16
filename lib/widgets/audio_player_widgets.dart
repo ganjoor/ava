@@ -68,8 +68,8 @@ class ControlButtons extends StatelessWidget {
                       narration.verses = res.item1;
                     }
                   }
-                  player.setUrl(narration.mp3Url);
-                  player.play();
+                  await player.setUrl(narration.mp3Url);
+                  await player.play();
                 },
               );
             } else if (processingState != ProcessingState.completed) {
