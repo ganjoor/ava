@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage>
     var res = await PublishedRecitationsService().getRecitationById(widget.id);
     if (res.item2.isNotEmpty) {
       _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: ${res.item2}"),
+        content: Text('خطا در دریافت خوانش‌ها: ${res.item2}'),
         backgroundColor: Colors.red,
       ));
     }
@@ -154,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage>
         .getRecitations(_pageNumber, _pageSize, _searchTerm);
     if (res.error.isNotEmpty) {
       _key.currentState.showSnackBar(SnackBar(
-        content: Text("خطا در دریافت خوانش‌ها: ${res.error}"),
+        content: Text('خطا در دریافت خوانش‌ها: ${res.error}'),
         backgroundColor: Colors.red,
       ));
     }

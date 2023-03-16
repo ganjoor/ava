@@ -10,7 +10,7 @@ class Routes {
 
   static final Handler _viewHandler =
       Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    int id = int.parse(params["id"]?.first);
+    int id = int.parse(params['id']?.first);
     return MyHomePage(id: id);
   });
 
