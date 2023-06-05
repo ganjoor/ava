@@ -31,7 +31,7 @@ dependencies:
   http: ^0.13.6
   loading_overlay: ^0.3.0
   after_layout: ^1.2.0
-  just_audio: ^0.9.32
+  just_audio: ^0.9.34
   url_launcher: ^6.1.11
   tuple: ^2.0.1
   fluro: ^2.0.5
