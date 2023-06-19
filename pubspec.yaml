@@ -33,7 +33,7 @@ dependencies:
   after_layout: ^1.2.0
   just_audio: ^0.9.34
   url_launcher: ^6.1.11
-  tuple: ^2.0.1
+  tuple: ^2.0.2
   fluro: ^2.0.5
   universal_html: ^2.2.1
 
