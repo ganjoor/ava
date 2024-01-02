@@ -29,7 +29,7 @@ class PublishedRecitationsService {
         return PaginatedItemsResponseModel<PublicRecitationViewModel>(
             items: ret,
             paginationMetadata: PaginationMetadata.fromJson(
-                json.decode(response.headers['paging-headers'])),
+                json.decode(response.headers['paging-headers']!)),
             error: '');
       } else {
         return PaginatedItemsResponseModel<PublicRecitationViewModel>(
@@ -42,7 +42,7 @@ class PublishedRecitationsService {
     }
   }
 
-  Future<Tuple2<PublicRecitationViewModel, String>> getRecitationById(
+  Future<Tuple2<PublicRecitationViewModel?, String>> getRecitationById(
       int id) async {
     try {
       var apiRoot = GServiceAddress.url;
@@ -56,16 +56,16 @@ class PublishedRecitationsService {
             PublicRecitationViewModel.fromJson(json.decode(response.body));
         return Tuple2<PublicRecitationViewModel, String>(ret, '');
       } else {
-        return Tuple2<PublicRecitationViewModel, String>(
+        return Tuple2<PublicRecitationViewModel?, String>(
             null, 'کد برگشتی: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
-      return Tuple2<PublicRecitationViewModel, String>(null,
+      return Tuple2<PublicRecitationViewModel?, String>(null,
           'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: $e');
     }
   }
 
-  Future<Tuple2<List<RecitationVerseSync>, String>> getVerses(int id) async {
+  Future<Tuple2<List<RecitationVerseSync>?, String>> getVerses(int id) async {
     try {
       var apiRoot = GServiceAddress.url;
       http.Response response = await http.get(
@@ -76,15 +76,15 @@ class PublishedRecitationsService {
       if (response.statusCode == 200) {
         List<dynamic> items = json.decode(response.body);
         for (var item in items) {
-          ret.add(RecitationVerseSync.fromJson(item));
+          ret.add(RecitationVerseSync.fromJson(item)!);
         }
         return Tuple2<List<RecitationVerseSync>, String>(ret, '');
       } else {
-        return Tuple2<List<RecitationVerseSync>, String>(
+        return Tuple2<List<RecitationVerseSync>?, String>(
             null, 'کد برگشتی: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
-      return Tuple2<List<RecitationVerseSync>, String>(null,
+      return Tuple2<List<RecitationVerseSync>?, String>(null,
           'سرور مشخص شده در تنظیمات در دسترس نیست.\u200Fجزئیات بیشتر: $e');
     }
   }

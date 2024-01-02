@@ -21,7 +21,7 @@ void main() {
 }
 
 class AvaApp extends StatefulWidget {
-  const AvaApp({Key key}) : super(key: key);
+  const AvaApp({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AvaAppState();
@@ -41,10 +41,10 @@ class AvaAppState extends State<AvaApp> {
     }
   }
 
-  static FluroRouter router;
+  static FluroRouter? router;
   AvaAppState() {
     router = FluroRouter();
-    Routes.configureRoutes(router);
+    Routes.configureRoutes(router!);
   }
   // This widget is the root of your application.
   @override
@@ -63,17 +63,17 @@ class AvaAppState extends State<AvaApp> {
             // is not restarted.
             primarySwatch: Colors.brown,
             fontFamily: 'Samim'),
-        onGenerateRoute: router.generator,
-        builder: (BuildContext context, Widget child) {
+        onGenerateRoute: router!.generator,
+        builder: (BuildContext context, Widget? child) {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Builder(
               builder: (BuildContext context) {
                 return MediaQuery(
                   data: MediaQuery.of(context).copyWith(
-                    textScaleFactor: 1.0,
+                    textScaler: const TextScaler.linear(1.0),
                   ),
-                  child: child,
+                  child: child!,
                 );
               },
             ),
@@ -83,9 +83,9 @@ class AvaAppState extends State<AvaApp> {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.id}) : super(key: key);
+  const MyHomePage({Key? key, this.id}) : super(key: key);
 
-  final int id;
+  final int? id;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -99,12 +99,12 @@ class _MyHomePageState extends State<MyHomePage>
   int _pageNumber = 1;
   final int _pageSize = 10;
   String _searchTerm = '';
-  PublicRecitationViewModel _recitation;
-  AudioPlayer _player;
+  PublicRecitationViewModel? _recitation;
+  AudioPlayer? _player;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _artistNameController = TextEditingController();
 
-  PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
+  PaginatedItemsResponseModel<PublicRecitationViewModel>? _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
 
   @override
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void dispose() {
-    _player.dispose();
+    _player!.dispose();
     _titleController.dispose();
     _artistNameController.dispose();
     super.dispose();
@@ -128,9 +128,9 @@ class _MyHomePageState extends State<MyHomePage>
     setState(() {
       _isLoading = true;
     });
-    var res = await PublishedRecitationsService().getRecitationById(widget.id);
+    var res = await PublishedRecitationsService().getRecitationById(widget.id!);
     if (res.item2.isNotEmpty) {
-      _key.currentState.showSnackBar(SnackBar(
+      _key.currentState!.showSnackBar(SnackBar(
         content: Text('خطا در دریافت خوانش‌ها: ${res.item2}'),
         backgroundColor: Colors.red,
       ));
@@ -144,8 +144,8 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future _loadRecitations() async {
-    if (_player.playing) {
-      await _player.stop();
+    if (_player!.playing) {
+      await _player!.stop();
     }
     setState(() {
       _isLoading = true;
@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage>
     var res = await PublishedRecitationsService()
         .getRecitations(_pageNumber, _pageSize, _searchTerm);
     if (res.error.isNotEmpty) {
-      _key.currentState.showSnackBar(SnackBar(
+      _key.currentState!.showSnackBar(SnackBar(
         content: Text('خطا در دریافت خوانش‌ها: ${res.error}'),
         backgroundColor: Colors.red,
       ));
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-    if (_recitations.items.isNotEmpty) {
+    if (_recitations!.items.isNotEmpty) {
       await _expansionCallback(0, true);
     }
   }
@@ -177,31 +177,28 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _snackbarNeeded(String msg) {
-    _key.currentState.showSnackBar(SnackBar(
+    _key.currentState!.showSnackBar(SnackBar(
       content: Text(msg),
       backgroundColor: Colors.red,
     ));
   }
 
-  String getVerse(PublicRecitationViewModel narration, Duration position) {
-    if (position == null || narration == null || narration.verses == null) {
+  String getVerse(PublicRecitationViewModel narration, Duration? position) {
+    if (position == null || narration.verses == null) {
       return '';
     }
-    var verse = narration.verses.lastWhere(
+    var verse = narration.verses!.lastWhere(
         (element) => element.audioStartMilliseconds <= position.inMilliseconds);
-    if (verse == null) {
-      return '';
-    }
     return verse.verseText;
   }
 
   Future _expansionCallback(int index, bool isExpanded) async {
-    if (_player.playing) {
-      await _player.stop();
+    if (_player!.playing) {
+      await _player!.stop();
     }
-    if (!_recitations.items[index].isExpanded) {
-      for (var item in _recitations.items) {
-        if (item.isExpanded && item.id != _recitations.items[index].id) {
+    if (!_recitations!.items[index].isExpanded) {
+      for (var item in _recitations!.items) {
+        if (item.isExpanded && item.id != _recitations!.items[index].id) {
           setState(() {
             item.isExpanded = false;
           });
@@ -209,17 +206,17 @@ class _MyHomePageState extends State<MyHomePage>
       }
     }
     setState(() {
-      _recitations.items[index].isExpanded =
-          !_recitations.items[index].isExpanded;
+      _recitations!.items[index].isExpanded =
+          !_recitations!.items[index].isExpanded;
     });
 
-    if (_recitations.items[index].isExpanded) {
-      _titleController.text = _recitations.items[index].audioTitle;
-      _artistNameController.text = _recitations.items[index].audioArtist;
+    if (_recitations!.items[index].isExpanded) {
+      _titleController.text = _recitations!.items[index].audioTitle;
+      _artistNameController.text = _recitations!.items[index].audioArtist;
     }
   }
 
-  Future<String> _getSearchParams() async {
+  Future<String?> _getSearchParams() async {
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -242,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage>
                 child: ExpansionPanelList(
                     key: GlobalKey<ScaffoldMessengerState>(),
                     expansionCallback: _expansionCallback,
-                    children: _recitations.items
+                    children: _recitations!.items
                         .map((e) => ExpansionPanel(
                             headerBuilder:
                                 (BuildContext context, bool isExpanded) {
@@ -309,15 +306,15 @@ class _MyHomePageState extends State<MyHomePage>
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    ControlButtons(_player, e,
+                                    ControlButtons(_player!, e,
                                         _loadingStateChanged, _snackbarNeeded),
-                                    StreamBuilder<Duration>(
-                                      stream: _player.durationStream,
+                                    StreamBuilder<Duration?>(
+                                      stream: _player!.durationStream,
                                       builder: (context, snapshot) {
                                         final duration =
                                             snapshot.data ?? Duration.zero;
                                         return StreamBuilder<Duration>(
-                                          stream: _player.positionStream,
+                                          stream: _player!.positionStream,
                                           builder: (context, snapshot) {
                                             var position =
                                                 snapshot.data ?? Duration.zero;
@@ -334,7 +331,8 @@ class _MyHomePageState extends State<MyHomePage>
                                                     duration: duration,
                                                     position: position,
                                                     onChangeEnd: (newPosition) {
-                                                      _player.seek(newPosition);
+                                                      _player!
+                                                          .seek(newPosition);
                                                     },
                                                   ),
                                                   Text(getVerse(e, position))
@@ -393,7 +391,7 @@ class _MyHomePageState extends State<MyHomePage>
         : _recitation == null
             ? const Text('در حال بارگذاری')
             : ViewRecitation(
-                narration: _recitation,
+                narration: _recitation!,
                 loadingStateChanged: _loadingStateChanged,
                 snackbarNeeded: _snackbarNeeded,
               );
@@ -401,8 +399,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   String get currentPageText {
     if (_recitations != null) {
-      if (_recitations.paginationMetadata != null) {
-        return 'صفحهٔ ${_recitations.paginationMetadata.currentPage} از ${_recitations.paginationMetadata.totalPages} (${_recitations.items.length} از ${_recitations.paginationMetadata.totalCount})';
+      if (_recitations!.paginationMetadata != null) {
+        return 'صفحهٔ ${_recitations!.paginationMetadata!.currentPage} از ${_recitations!.paginationMetadata!.totalPages} (${_recitations!.items.length} از ${_recitations!.paginationMetadata!.totalCount})';
       }
     }
 
@@ -528,7 +526,7 @@ class _MyHomePageState extends State<MyHomePage>
                       tooltip: 'صفحهٔ بعد',
                       onPressed: () async {
                         if (_pageNumber <
-                            _recitations.paginationMetadata.totalPages) {
+                            _recitations!.paginationMetadata!.totalPages) {
                           _pageNumber++;
                           await _loadRecitations();
                         }
@@ -539,9 +537,9 @@ class _MyHomePageState extends State<MyHomePage>
                       tooltip: 'صفحهٔ آخر',
                       onPressed: () async {
                         if (_pageNumber !=
-                            _recitations.paginationMetadata.totalPages) {
+                            _recitations!.paginationMetadata!.totalPages) {
                           _pageNumber =
-                              _recitations.paginationMetadata.totalPages;
+                              _recitations!.paginationMetadata!.totalPages;
                           await _loadRecitations();
                         }
                       },
@@ -567,10 +565,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    if (widget.id == null) {
-      await _loadRecitations();
-    } else {
-      await _loadRecitation();
-    }
+    await _loadRecitation();
   }
 }

@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 class SearchTerm extends StatefulWidget {
   final String term;
 
-  const SearchTerm({Key key, this.term}) : super(key: key);
+  const SearchTerm({Key? key, required this.term}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _SearchTermState();
 }
 
 class _SearchTermState extends State<SearchTerm> {
-
   final _searchController = TextEditingController();
-
 
   @override
   void dispose() {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class Contribute extends StatefulWidget {
-  const Contribute({Key key}) : super(key: key);
+  const Contribute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContributeState();
@@ -26,7 +26,7 @@ class _ContributeState extends State<Contribute> {
                         child: Text(
                           'شرایط انتشار خوانش اشعار در گنجور به شرح زیر است:\r\n' '۱. فایل صوتی شعر می‌بایست در قالب mp3 تهیه شده باشد.\r\n' '۲. می‌بایست با گنجور رومیزی متن شعر را با فایل صوتی همگام کنید و از آن خروجی xml بگیرید.\r\n' 
                               '۳. از طریق پیشخان خوانشگران گنجور فایلهای mp3 و xml را ارسال کنید.\r\n',
-                          style: Theme.of(context).primaryTextTheme.headline6,
+                          style: Theme.of(context).primaryTextTheme.titleLarge,
                         ),
                       ),
                       Center(
