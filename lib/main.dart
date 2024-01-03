@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage>
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _artistNameController = TextEditingController();
 
-  PaginatedItemsResponseModel<PublicRecitationViewModel>? _recitations =
+  PaginatedItemsResponseModel<PublicRecitationViewModel> _recitations =
       PaginatedItemsResponseModel<PublicRecitationViewModel>(items: []);
 
   @override
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
 
-    if (_recitations!.items.isNotEmpty) {
+    if (_recitations.items.isNotEmpty) {
       await _expansionCallback(0, true);
     }
   }
@@ -196,9 +196,9 @@ class _MyHomePageState extends State<MyHomePage>
     if (_player!.playing) {
       await _player!.stop();
     }
-    if (!_recitations!.items[index].isExpanded) {
-      for (var item in _recitations!.items) {
-        if (item.isExpanded && item.id != _recitations!.items[index].id) {
+    if (!_recitations.items[index].isExpanded) {
+      for (var item in _recitations.items) {
+        if (item.isExpanded && item.id != _recitations.items[index].id) {
           setState(() {
             item.isExpanded = false;
           });
@@ -206,13 +206,13 @@ class _MyHomePageState extends State<MyHomePage>
       }
     }
     setState(() {
-      _recitations!.items[index].isExpanded =
-          !_recitations!.items[index].isExpanded;
+      _recitations.items[index].isExpanded =
+          !_recitations.items[index].isExpanded;
     });
 
-    if (_recitations!.items[index].isExpanded) {
-      _titleController.text = _recitations!.items[index].audioTitle;
-      _artistNameController.text = _recitations!.items[index].audioArtist;
+    if (_recitations.items[index].isExpanded) {
+      _titleController.text = _recitations.items[index].audioTitle;
+      _artistNameController.text = _recitations.items[index].audioArtist;
     }
   }
 
@@ -239,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage>
                 child: ExpansionPanelList(
                     key: GlobalKey<ScaffoldMessengerState>(),
                     expansionCallback: _expansionCallback,
-                    children: _recitations!.items
+                    children: _recitations.items
                         .map((e) => ExpansionPanel(
                             headerBuilder:
                                 (BuildContext context, bool isExpanded) {
@@ -398,10 +398,8 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   String get currentPageText {
-    if (_recitations != null) {
-      if (_recitations!.paginationMetadata != null) {
-        return 'صفحهٔ ${_recitations!.paginationMetadata!.currentPage} از ${_recitations!.paginationMetadata!.totalPages} (${_recitations!.items.length} از ${_recitations!.paginationMetadata!.totalCount})';
-      }
+    if (_recitations.paginationMetadata != null) {
+      return 'صفحهٔ ${_recitations.paginationMetadata!.currentPage} از ${_recitations.paginationMetadata!.totalPages} (${_recitations.items.length} از ${_recitations.paginationMetadata!.totalCount})';
     }
 
     return '';
@@ -526,7 +524,7 @@ class _MyHomePageState extends State<MyHomePage>
                       tooltip: 'صفحهٔ بعد',
                       onPressed: () async {
                         if (_pageNumber <
-                            _recitations!.paginationMetadata!.totalPages) {
+                            _recitations.paginationMetadata!.totalPages) {
                           _pageNumber++;
                           await _loadRecitations();
                         }
@@ -537,9 +535,9 @@ class _MyHomePageState extends State<MyHomePage>
                       tooltip: 'صفحهٔ آخر',
                       onPressed: () async {
                         if (_pageNumber !=
-                            _recitations!.paginationMetadata!.totalPages) {
+                            _recitations.paginationMetadata!.totalPages) {
                           _pageNumber =
-                              _recitations!.paginationMetadata!.totalPages;
+                              _recitations.paginationMetadata!.totalPages;
                           await _loadRecitations();
                         }
                       },
@@ -565,6 +563,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await _loadRecitation();
+    if (widget.id != null) {
+      await _loadRecitation();
+    } else {
+      await _loadRecitations();
+    }
   }
 }
